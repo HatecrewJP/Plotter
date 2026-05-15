@@ -30,11 +30,11 @@ set BuildDir=bin
 set CodePath=%Root%\src
 set AdditionalLibsPath=%Root%\lib\
 
-set Libraries=kernel32.lib user32.lib shell32.lib Winmm.lib gdi32.lib opengl32.lib %AdditionalLibsPath%\raylib.lib
-set CommonCompilerFlags=-MD -nologo -GR-  -Oi -Od -W4 -WX -wd4201 -wd4100 -wd4101 -wd4189  -DHANDMADE_SLOW=1 -DHANDMADE_INTERNAL=1 -DHANDMADE_WIN32=1  -FC -Zi -std:c11
-set CommonLinkerFlags=%Libraries% -opt:ref -incremental:no 
+set Libraries=kernel32.lib user32.lib shell32.lib Winmm.lib gdi32.lib opengl32.lib %AdditionalLibsPath%\raylib_mtd.lib
+set CommonCompilerFlags=-MTd -nologo -GR-  -Oi -Od -W4 -WX -wd4201 -wd4100 -wd4101 -wd4189 -FC -Zi 
+set CommonLinkerFlags=%Libraries% -opt:ref -incremental:no
 
 if not exist %BuildDir% mkdir %BuildDir%
 pushd %BuildDir%
-cl %CommonCompilerFlags% %CodePath%/main.c /link %CommonLinkerFlags% 
+cl %CommonCompilerFlags% %CodePath%/main.c /link %CommonLinkerFlags%
 popd

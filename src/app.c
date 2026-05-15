@@ -374,8 +374,8 @@ void UpdateSlider(int MouseX,
         Slider->Circle.x = NewPosX;
         
     }
-    float RelPosX = (Slider->Circle.x - Slider->Rect.x);
-    float Percentage = RelPosX / Slider->Rect.width;
+    float RelPosX = (Slider->Circle.x - Slider->Rect.x - Slider->Circle.Radius);
+    float Percentage = RelPosX / (Slider->Rect.width - 2 * Slider->Circle.Radius);
     Slider->Value = (Slider->ValueMax - Slider->ValueMin) * Percentage + Slider->ValueMin;
     
     
