@@ -19,7 +19,13 @@ typedef enum CCS_TYPE{
 
 
 
+#define DebugDumpToFile(a,b) (DebugDumpToFileF("DebugDataDump",(a),(b)))
 
+void DebugDumpToFileF(const char* FileName, void *data, int size){
+    FILE *f = fopen(FileName,"w");
+    fwrite(data,1,size,f);
+    fclose(f);
+}
 
 #define VALUES_PER_UNIT (UnitSize/2)
 static void PlotComplexFunction(_Fcomplex(*ToPlot)(float t),
@@ -487,6 +493,10 @@ void UpdateApp(float *_dt){
     
     
     PlotComplexFunction(&f,&GraphPoints,&PointCount,Rect1,UnitSize1,dt);
+    static int tmp = 0;
+    if(tmp==0){
+        DebugDumpToFile(GraphPoints, sizeof(*GraphPoints) * PointCount);
+    }
     DisplayPoints(&GraphPoints,PointCount,RED,Rect1);
     
     
