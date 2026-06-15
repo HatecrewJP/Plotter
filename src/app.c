@@ -60,7 +60,7 @@ static void PlotComplexFunction(_Fcomplex(*ToPlot)(float t),
     *PointCountOut = PointCount;
 }
 
-static void PlotComplexFunction2(_Fcomplex(*ToPlot)(float t), 
+static void PlotComplexFunction2(_Fcomplex(*ToPlot)(_Fcomplex), 
                                  Vector2* *PointsOut, 
                                  int *PointCountOut, 
                                  Rectangle Rect,
@@ -74,20 +74,28 @@ static void PlotComplexFunction2(_Fcomplex(*ToPlot)(float t),
     
     float t = 0;
     float UnitCount = (float)w/UnitSize;
-    int PointCount = (int)(UnitCount * VALUES_PER_UNIT);
+    int PointsPerDimension = (int)(UnitCount * VALUES_PER_UNIT)/4;
+    int PointCount = PointsPerDimension * PointsPerDimension;
     Vector2 *Result = malloc(PointCount * sizeof(*Result));
     
-    for(int Index = 0; Index < PointCount;Index++){
-        t = ((float)Index / (float)VALUES_PER_UNIT)-(float)(w/2);
-        _Fcomplex Value = ToPlot(t+dt);
-        float Real = Value._Val[0];
-        float Imag = Value._Val[1];
-        Vector2 Point =  {Real,-Imag};
-        Point.x *= UnitSize;
-        Point.y *= UnitSize;
-        Point.x += x+(w/2);
-        Point.y += y+(h/2);
-        Result[Index] = Point; 
+    
+    for(int IndexImag = 0; IndexImag < PointsPerDimension;IndexImag++){
+        for(int IndexReal = 0; IndexReal < PointsPerDimension;IndexReal++){
+            _Fcomplex z ={0};
+            
+            z._Val[0] = ((float)IndexReal / (float)VALUES_PER_UNIT)-(float)(w/2);
+            z._Val[1] = ((float)IndexImag / (float)VALUES_PER_UNIT)-(float)(h/2);
+            
+            _Fcomplex Value = ToPlot(z);
+            float Real = Value._Val[0];
+            float Imag = Value._Val[1];
+            Vector2 Point =  {Real,-Imag};
+            Point.x *= UnitSize;
+            Point.y *= UnitSize;
+            Point.x += x+(w/2);
+            Point.y += y+(h/2);
+            Result[IndexImag * PointsPerDimension + IndexReal] = Point; 
+        }
     }
     
     *PointsOut = Result;
@@ -493,10 +501,9 @@ void UpdateApp(float *_dt){
     
     
     PlotComplexFunction(&f,&GraphPoints,&PointCount,Rect1,UnitSize1,dt);
-    static int tmp = 0;
-    if(tmp==0){
-        DebugDumpToFile(GraphPoints, sizeof(*GraphPoints) * PointCount);
-    }
+    DisplayPoints(&GraphPoints,PointCount,RED,Rect1);
+    
+    PlotComplexFunction2(&f2,&GraphPoints,&PointCount,Rect1,UnitSize1,dt);
     DisplayPoints(&GraphPoints,PointCount,RED,Rect1);
     
     

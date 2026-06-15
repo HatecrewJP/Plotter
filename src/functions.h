@@ -25,6 +25,21 @@ _Fcomplex f(float t){
     return Value;
 }
 
+_Fcomplex f2(_Fcomplex z){
+    float A = 1.5f;
+    float T = 2.0f / 3.0f;
+    float F = 1.0f / T;
+    
+    _Fcomplex Exponent ={0, 2 * PI  * F * z._Val[0] + PI};
+    
+    _Fcomplex Value = cpowf(E32C,Exponent);
+    Value._Val[0] *= A;
+    Value._Val[1] *= A;
+    Value._Val[0] += 0.0f;
+    return Value;
+}
+
+
 float fImag(float t){
     float A = 1.5f;
     float T = 2.0f / 3.0f;
